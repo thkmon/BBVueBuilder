@@ -33,6 +33,8 @@ public class BuildThead extends Thread {
 	
 	
 	public static void startBuild(String inputProjectDirPath) {
+		ConsoleUtil.clear();
+		
 		// 0. 시작
 		ConsoleUtil.print("start");
 		

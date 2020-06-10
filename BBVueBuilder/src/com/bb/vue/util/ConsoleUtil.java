@@ -5,6 +5,14 @@ import com.bb.vue.form.MainForm;
 public class ConsoleUtil {
 	
 	
+	public static void clear() {
+		if (MainForm.textArea != null) {
+			MainForm.textArea.setText("");
+			MainForm.textArea.setCaretPosition(0);
+		}
+	}
+	
+	
 	public static void print(String message) {
 		System.out.println(message);
 
