@@ -1,4 +1,4 @@
-package com.bb.vue;
+package com.bb.vue.util;
 
 import java.io.File;
 import java.io.FileInputStream;

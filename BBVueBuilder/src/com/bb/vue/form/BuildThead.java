@@ -1,30 +1,55 @@
-package com.bb.vue;
+package com.bb.vue.form;
 
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
 
-public class BBVueBuilder {
+import com.bb.vue.util.ConsoleUtil;
+import com.bb.vue.util.CopyUtil;
 
-	public static void main(String[] args) {
+public class BuildThead extends Thread {
+
+	@Override
+	public void run() {
+		super.run();
 		
-		// 0. 시작
-		System.out.println("start");
+		// 버튼 비활성화
+		MainForm.setFormDisable();
+		
+		String inputProjectDirPath = MainForm.textField1.getText();
 		
 		try {
-			String projectDirPath = "";
+			startBuild(inputProjectDirPath);
+			
+		} catch (Exception ex) {
+			ConsoleUtil.print(ex);
+			
+		} finally {
+			// 버튼 활성화
+			MainForm.setFormEnable();
+		}
+	}
+	
+	
+	public static void startBuild(String inputProjectDirPath) {
+		// 0. 시작
+		ConsoleUtil.print("start");
+		
+		try {
+			String projectDirPath = inputProjectDirPath;
 			
 			// 1. 프로젝트 폴더 경로 지정
 			// 아규먼트가 있을 경우 프로젝트 폴더 경로로 지정한다.
 			// 아규먼트가 없을 경우 현재 디렉토리부터 상위 디렉토리로 올라가면서 프로젝트 폴더를 찾는다.
+			/*
 			if (args != null && args.length > 0 && args[0] != null && args[0].length() > 0) {
 				projectDirPath = args[0];
 				
 			} else {
 				// 디렉토리를 찾는다. 현재 디렉토리부터 상위 디렉토리로 올라가면서 frontend 폴더를 갖고 있는 폴더를 찾으면 프로젝트 폴더로 간주한다.
-				System.out.println("");
-				System.out.println("ready to find project folder");
+				ConsoleUtil.print("");
+				ConsoleUtil.print("ready to find project folder");
 				
 				File curDirObj = new File("");
 				String curDirPath = curDirObj.getAbsolutePath();
@@ -66,26 +91,27 @@ public class BBVueBuilder {
 					axisIdx = delimiterIdx - 1;
 				}
 			}
+			*/
 			
 			if (projectDirPath == null || projectDirPath.length() == 0) {
-				System.err.println("[ERROR] Unknown projectDirPath");
+				ConsoleUtil.print("[ERROR] Unknown projectDirPath");
 				return;
 			}
 			
 			File projectDirObj = new File(projectDirPath);
 			if (!projectDirObj.exists()) {
-				System.err.println("[ERROR] Folder not exists. (" + projectDirObj.getAbsolutePath() + ")");
+				ConsoleUtil.print("[ERROR] Folder not exists. (" + projectDirObj.getAbsolutePath() + ")");
 				return;
 			}
 			
-			System.out.println("projectDirPath : " + projectDirPath);
+			ConsoleUtil.print("projectDirPath : " + projectDirPath);
 			
 			String distDirPath = projectDirPath + "\\frontend\\dist";
 			
 			
 			// 2. 기존 배포 파일들 삭제
-			System.out.println("");
-			System.out.println("ready to delete distribution files");
+			ConsoleUtil.print("");
+			ConsoleUtil.print("ready to delete distribution files");
 			
 			ArrayList<String> fileNameList = new ArrayList<String>();
 			fileNameList.add("build.min.js");
@@ -97,7 +123,7 @@ public class BBVueBuilder {
 				String oneFilePath = distDirPath + "\\" + fileNameList.get(i);
 				File oneFileObj = new File(oneFilePath);
 				if (oneFileObj.exists()) {
-					System.out.println("deleted : " + oneFilePath);
+					ConsoleUtil.print("deleted : " + oneFilePath);
 					oneFileObj.delete();
 				}
 			}
@@ -106,15 +132,15 @@ public class BBVueBuilder {
 				String oneFilePath = distDirPath + "\\" + fileNameList.get(i);
 				File oneFileObj = new File(oneFilePath);
 				if (oneFileObj.exists()) {
-					System.err.println("[ERROR] File deletion failed");
+					ConsoleUtil.print("[ERROR] File deletion failed");
 					return;
 				}
 			}
 			
 			
 			// 3. npm 빌드 수행
-			System.out.println("");
-			System.out.println("ready to build vue files");
+			ConsoleUtil.print("");
+			ConsoleUtil.print("ready to build vue files");
 			
 			String dirPath = projectDirPath + "\\frontend";
 			
@@ -142,7 +168,7 @@ public class BBVueBuilder {
 				String line = null;
 	
 				while ((line = bufferedReader.readLine()) != null) {
-					// System.out.println(line);
+					// ConsoleUtil.print(line);
 				}
 				
 			} catch (Exception e) {
@@ -156,8 +182,8 @@ public class BBVueBuilder {
 			
 			
 			// 4. 빌드된 파일 복사
-			System.out.println("");
-			System.out.println("ready to copy builded files");
+			ConsoleUtil.print("");
+			ConsoleUtil.print("ready to copy builded files");
 			
 			String destCssDirPath = projectDirPath + "\\src\\main\\webapp\\resources\\css";
 			String destJsDirPath = projectDirPath + "\\src\\main\\webapp\\resources\\js";
@@ -177,24 +203,25 @@ public class BBVueBuilder {
 					}
 					
 					if (CopyUtil.copyFile(oneFileObj, destFileObj)) {
-						System.out.println("copied : " + oneFileObj.getAbsolutePath() + " => " + destFileObj.getAbsolutePath());
+						ConsoleUtil.print("copied : " + oneFileObj.getAbsolutePath() + " => " + destFileObj.getAbsolutePath());
 						copiedCount++;
 					}
 				}
 			}
 			
-			System.out.println("copied file count : " + copiedCount + "/" + fileNameCount);
+			ConsoleUtil.print("copied file count : " + copiedCount + "/" + fileNameCount);
 			
 		} catch (Exception e) {
 			e.printStackTrace();
+			ConsoleUtil.print(e);
 			return;
 			
 		} finally {
 		}
 		
 		// 5. 종료
-		System.out.println("");
-		System.out.println("end");
+		ConsoleUtil.print("");
+		ConsoleUtil.print("end");
 	}
 	
 	
