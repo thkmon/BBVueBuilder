@@ -164,8 +164,12 @@ public class MainForm extends JFrame {
 	
 	private void addButton() {
 		
+		// gray color
+		Color buttonColor = new Color(230, 230, 230);
+		
 		pathButton1 = new JButton("...");
 		pathButton1.setFont(basicFont);
+		pathButton1.setBackground(buttonColor);
 		pathButton1.setBounds(600, 10, 35, textFieldHeight);
 		this.getContentPane().add(pathButton1);
 		
@@ -173,31 +177,8 @@ public class MainForm extends JFrame {
 			
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				// 파일 선택 다이얼로그 정의
-				JFileChooser fileDialog = new JFileChooser();
-
-				// 폴더만 선택
-				fileDialog.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
-
-				// 파일만 선택
-				// fileDialog.setFileSelectionMode(JFileChooser.FILES_ONLY);
-
-				// 기본 폴더 위치 변경
-				File dirObj = new File(textField1.getText());
-				if (dirObj.exists()) {
-				    fileDialog.setCurrentDirectory(dirObj);
-				} else {
-					dirObj = new File("C:\\");
-					if (dirObj.exists()) {
-					    fileDialog.setCurrentDirectory(dirObj);
-					}
-				}
-
-				// 파일 선택 다이얼로그 열기
-				int returnVal = fileDialog.showOpenDialog(null);
-				if (returnVal == 0) {
-				    // 파일 선택
-					String selectedPath = fileDialog.getSelectedFile().getAbsolutePath();
+				String selectedPath = new DialogWrapper().openFolderDialog(textField1.getText());
+				if (selectedPath != null && selectedPath.length() > 0) {
 					textField1.setText(selectedPath);
 				}
 			}
@@ -206,6 +187,7 @@ public class MainForm extends JFrame {
 		// 우측상단 버튼 추가
 		buildButton = new JButton("Build");
 		buildButton.setFont(basicFont);
+		buildButton.setBackground(buttonColor);
 		buildButton.setBounds(645, 10, 120, buttonHeight);
 		this.getContentPane().add(buildButton);
 		
